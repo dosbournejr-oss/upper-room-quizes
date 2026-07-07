@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keys for a Happy Marriage — Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#0a1830;
+    --navy:#132646;
+    --navy-light:#1c3358;
+    --gold:#c9a227;
+    --gold-bright:#e8c565;
+    --amber:#e08d3c;
+    --cream:#f4ecd8;
+    --cream-dim:#cfc6ac;
+    --red:#a8384a;
+    --green:#3f7d5c;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(201,162,39,0.16), transparent 55%),
+      linear-gradient(180deg, var(--navy-deep) 0%, #071022 100%);
+    color:var(--cream);
+    font-family:'Source Sans 3', sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:32px 16px 64px;
+    overflow-x:hidden;
+  }
+  .wrap{width:100%;max-width:720px;}
+
+  header{text-align:center;margin-bottom:28px;}
+  .eyebrow{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:18px;
+    color:var(--gold-bright);
+    letter-spacing:0.04em;
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Playfair Display', serif;
+    font-weight:900;
+    font-size:clamp(28px,6vw,42px);
+    margin:0 0 8px;
+    color:var(--cream);
+    text-shadow:0 2px 20px rgba(201,162,39,0.25);
+  }
+  .sub{color:var(--cream-dim);font-size:15px;max-width:520px;margin:0 auto;line-height:1.5;}
+
+  /* KEYRING */
+  .keyring{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:26px 0 8px;
+    padding:14px 10px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(201,162,39,0.18);
+    border-radius:16px;
+  }
+  .key{
+    width:26px;height:26px;
+    position:relative;
+    opacity:0.28;
+    transition:opacity .5s ease, transform .5s ease, filter .5s ease;
+  }
+  .key svg{width:100%;height:100%;display:block;}
+  .key.locked svg .keybody{fill:#5a6274;}
+  .key.unlocked{opacity:1; transform:rotate(-8deg) scale(1.12); filter:drop-shadow(0 0 6px rgba(232,197,101,0.7));}
+  .key.unlocked svg .keybody{fill:var(--gold-bright);}
+  .key.missed{opacity:0.55;}
+  .key.missed svg .keybody{fill:#7a4a52;}
+  .keyring-label{
+    width:100%;text-align:center;font-size:12px;letter-spacing:0.14em;
+    text-transform:uppercase;color:var(--cream-dim);margin-bottom:8px;
+  }
+
+  .progress-text{
+    text-align:center;font-size:13px;color:var(--gold-bright);
+    letter-spacing:0.06em;text-transform:uppercase;margin-bottom:22px;
+  }
+
+  /* CARD */
+  .card{
+    background:linear-gradient(180deg, var(--navy-light), var(--navy) 70%);
+    border:1px solid rgba(201,162,39,0.25);
+    border-radius:20px;
+    padding:30px 26px 26px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+    position:relative;
+  }
+  .qnum{
+    font-family:'Playfair Display', serif;
+    font-size:14px;
+    color:var(--gold);
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .qtext{
+    font-family:'Playfair Display', serif;
+    font-weight:700;
+    font-size:clamp(19px,4vw,24px);
+    line-height:1.35;
+    margin:0 0 6px;
+  }
+  .qhint{font-size:13px;color:var(--amber);margin-bottom:20px;font-style:italic;}
+
+  .options{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+  .opt{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:14px 16px;
+    background:rgba(255,255,255,0.03);
+    border:1.5px solid rgba(207,198,172,0.22);
+    border-radius:12px;
+    cursor:pointer;
+    transition:background .2s, border-color .2s, transform .15s;
+    user-select:none;
+  }
+  .opt:hover{background:rgba(255,255,255,0.06);border-color:rgba(201,162,39,0.5);}
+  .opt.selected{border-color:var(--gold); background:rgba(201,162,39,0.12);}
+  .opt.disabled{cursor:default;}
+  .opt.disabled:hover{background:rgba(255,255,255,0.03);}
+
+  .box{
+    flex:0 0 20px;width:20px;height:20px;margin-top:2px;
+    border:2px solid var(--cream-dim);border-radius:5px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:700;transition:all .2s;
+  }
+  .opt.selected .box{border-color:var(--gold);background:var(--gold);color:var(--navy-deep);}
+  .opt-label{font-size:15.5px;line-height:1.45;padding-top:1px;}
+
+  /* revealed states */
+  .opt.correct-hit .box{background:var(--green);border-color:var(--green);color:#fff;}
+  .opt.correct-hit{border-color:var(--green);background:rgba(63,125,92,0.15);}
+  .opt.wrong-hit .box{background:var(--red);border-color:var(--red);color:#fff;}
+  .opt.wrong-hit{border-color:var(--red);background:rgba(168,56,74,0.15);}
+  .opt.missed-correct{border-color:var(--amber);background:rgba(224,141,60,0.13);}
+  .opt.missed-correct .box{border-color:var(--amber);}
+  .tag{margin-left:auto;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+  .tag.g{background:var(--green);color:#fff;}
+  .tag.r{background:var(--red);color:#fff;}
+  .tag.a{background:var(--amber);color:var(--navy-deep);}
+
+  .feedback{
+    display:none;
+    border-top:1px dashed rgba(201,162,39,0.3);
+    padding-top:16px;margin-top:4px;
+    font-family:'Cormorant Garamond', serif;
+    font-size:18px;
+    line-height:1.55;
+    color:var(--cream);
+  }
+  .feedback.show{display:block;}
+  .feedback b{color:var(--gold-bright);}
+  .verdict{
+    font-family:'Playfair Display',serif;font-weight:700;font-size:20px;
+    margin-bottom:8px;
+  }
+  .verdict.win{color:var(--gold-bright);}
+  .verdict.lose{color:#e79aa6;}
+
+  .actions{display:flex;justify-content:flex-end;gap:12px;margin-top:22px;}
+  button{
+    font-family:'Source Sans 3', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    padding:12px 26px;
+    border-radius:999px;
+    border:none;
+    cursor:pointer;
+    transition:transform .15s, box-shadow .15s, opacity .15s;
+  }
+  button:active{transform:scale(0.97);}
+  .btn-gold{background:linear-gradient(180deg, var(--gold-bright), var(--gold));color:var(--navy-deep);box-shadow:0 6px 18px rgba(201,162,39,0.3);}
+  .btn-gold:disabled{opacity:0.35;cursor:not-allowed;box-shadow:none;}
+  .btn-ghost{background:transparent;color:var(--cream-dim);border:1px solid rgba(207,198,172,0.3);}
+
+  /* RESULTS */
+  .results{text-align:center;}
+  .results h2{
+    font-family:'Playfair Display',serif;font-size:clamp(26px,5vw,36px);
+    color:var(--gold-bright); margin-bottom:6px;
+  }
+  .score-big{
+    font-family:'Playfair Display',serif;font-weight:900;font-size:64px;
+    color:var(--cream);margin:14px 0 4px;
+    text-shadow:0 0 30px rgba(201,162,39,0.4);
+  }
+  .score-label{color:var(--cream-dim);font-size:14px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:22px;}
+  .verse{
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;
+    color:var(--cream);max-width:520px;margin:0 auto 24px;line-height:1.6;
+  }
+  .verse span{color:var(--gold-bright);font-style:normal;font-weight:600;}
+
+  footer{margin-top:34px;text-align:center;color:rgba(207,198,172,0.4);font-size:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">A Bible Study Quiz — Amazing Facts</div>
+    <h1>Keys for a Happy Marriage</h1>
+    <p class="sub">Select every answer you believe belongs on the keyring. Submit to see which keys you've unlocked.</p>
+  </header>
+
+  <div class="keyring" id="keyring">
+    <div class="keyring-label">Your Keyring — 13 Keys to a Happy Marriage</div>
+  </div>
+  <div class="progress-text" id="progressText">Question 1 of 13</div>
+
+  <div class="card" id="quizCard"></div>
+
+  <div class="card results" id="resultsCard" style="display:none;"></div>
+
+  <footer>Based on the Amazing Facts Bible Study Guide, "Keys for a Happy Marriage"</footer>
+</div>
+
+<script>
+const KEY_SVG = `<svg viewBox="0 0 100 100"><g class="keybody"><circle cx="30" cy="30" r="18" fill-opacity="0" stroke="currentColor" stroke-width="10"/><rect x="45" y="24" width="45" height="12" rx="2"/><rect x="70" y="36" width="10" height="14"/><rect x="84" y="36" width="8" height="18"/></g></svg>`;
+
+const questions = [
+  {
+    text: "Marriage is",
+    pick: 1,
+    options: [
+      { t: "The joining of a man and woman together by God for life.", c: true },
+      { t: "A temporary, experimental arrangement to see if two people are compatible.", c: false },
+      { t: "Not even necessary — men and women are free to live together without it.", c: false }
+    ],
+    feedback: "God's principle is that marriage is a lifelong union He Himself ordains — not a trial run. <b>\"What God has joined together, let not man separate\"</b> (Matthew 19:6)."
+  },
+  {
+    text: "God recognizes only one reason for divorce. It is",
+    pick: 1,
+    options: [
+      { t: "Incompatibility.", c: false },
+      { t: "An irritable spouse.", c: false },
+      { t: "Adultery.", c: true },
+      { t: "Godlessness of a marriage partner.", c: false }
+    ],
+    feedback: "Divorce is permitted only in the case of adultery — and even then, it is never demanded. <b>Forgiveness is always the better path</b> (Matthew 19:9)."
+  },
+  {
+    text: "The courtesies of courtship",
+    pick: 1,
+    options: [
+      { t: "Should be continued in married life.", c: true },
+      { t: "Should be dropped quickly after the wedding.", c: false },
+      { t: "Are really silly and unnecessary.", c: false }
+    ],
+    feedback: "Successful marriages don't just happen — <b>they must be developed</b>. Keep courting each other for life."
+  },
+  {
+    text: "The best guarantee of success in marriage is",
+    pick: 1,
+    options: [
+      { t: "Having Christ in the hearts and home.", c: true },
+      { t: "The husband forcing his wife into line.", c: false },
+      { t: "The wife getting her way by threatening divorce.", c: false }
+    ],
+    feedback: "\"Unless the Lord builds the house, they labor in vain who build it\" (Psalm 127:1). <b>Christ at the center enables every other key.</b>"
+  },
+  {
+    text: "For safety in quarrels, do the following:",
+    pick: 3,
+    options: [
+      { t: "Speak softly and kindly to one another.", c: true },
+      { t: "Make your spouse admit error.", c: false },
+      { t: "Call in neighbors to settle things.", c: false },
+      { t: "Force your spouse to keep quiet.", c: false },
+      { t: "Walk out and stay away for several days.", c: false },
+      { t: "Pray together.", c: true },
+      { t: "Get over your anger before going to bed.", c: true }
+    ],
+    feedback: "\"Do not let the sun go down on your wrath\" (Ephesians 4:26). <b>Soft words, shared prayer, and cooling anger before bedtime</b> protect a marriage in conflict."
+  },
+  {
+    text: "Check the items that are keys to success in marriage:",
+    pick: 2,
+    options: [
+      { t: "Close the family circle to all third parties.", c: true },
+      { t: "Live in your parents' home.", c: false },
+      { t: "Run home to mother when angry.", c: false },
+      { t: "Tell close friends your spouse's faults.", c: false },
+      { t: "Establish your own private home.", c: true },
+      { t: "Write an old boyfriend for counsel.", c: false },
+      { t: "Never confess first after a spat.", c: false }
+    ],
+    feedback: "\"A man shall leave his father and mother and be joined to his wife\" (Genesis 2:24). <b>A private home and a closed, protected family circle</b> guard a marriage from outside interference."
+  },
+  {
+    text: "The best ways to improve your marriage partner are to",
+    pick: 2,
+    options: [
+      { t: "Threaten to leave unless you get your way.", c: false },
+      { t: "Nag and criticize.", c: false },
+      { t: "Improve your own relationship with Jesus Christ.", c: true },
+      { t: "Make your partner sleep alone.", c: false },
+      { t: "Be loving, appreciative, and forgiving.", c: true },
+      { t: "Force your partner to change.", c: false }
+    ],
+    feedback: "\"The secret of a successful marriage lies not in having the right partner, but in being the right partner.\" <b>Only God changes hearts</b> — ours and theirs."
+  },
+  {
+    text: "Check the items below which endanger a marriage:",
+    pick: 6,
+    options: [
+      { t: "Criticism.", c: true },
+      { t: "A stingy husband.", c: true },
+      { t: "A money-wasting wife.", c: true },
+      { t: "Laziness.", c: true },
+      { t: "A Christian home.", c: false },
+      { t: "Praying together.", c: false },
+      { t: "Disorder and filthiness.", c: true },
+      { t: "A forgiving spirit.", c: false },
+      { t: "Jealousy.", c: true }
+    ],
+    feedback: "Criticism, financial extremes, laziness, disorder, and jealousy all erode love — while <b>a Christian home, prayer, and forgiveness are the very things that protect it</b>."
+  },
+  {
+    text: "For success in making major decisions,",
+    pick: 2,
+    options: [
+      { t: "Husband and wife should counsel together.", c: true },
+      { t: "You should force your will on your spouse.", c: false },
+      { t: "Seek God in prayer together.", c: true },
+      { t: "Insist upon having your own way.", c: false }
+    ],
+    feedback: "\"Talk things over freely with one another\" — <b>open counsel and shared prayer</b> avoid the blunders that weaken a marriage."
+  },
+  {
+    text: "A good rule for in-laws is to",
+    pick: 1,
+    options: [
+      { t: "Leave newlyweds alone.", c: true },
+      { t: "Insist that newlyweds live with you.", c: false },
+      { t: "Determine to counsel newlyweds whether they want it or not.", c: false }
+    ],
+    feedback: "The duty of in-laws is to <b>leave the decisions made in the newly established home strictly alone</b>, unless counsel is requested by both partners."
+  },
+  {
+    text: "In case of unfaithfulness by your spouse, the best thing to do is to",
+    pick: 1,
+    options: [
+      { t: "Leave at once and never come back.", c: false },
+      { t: "Immediately tell everyone how \"low-down\" your partner is.", c: false },
+      { t: "Be willing to forgive and to preserve your home, if at all possible.", c: true }
+    ],
+    feedback: "God permits divorce for adultery — but never commands it. <b>Forgiveness is always better and always preferred</b> (Matthew 6:14, 15)."
+  },
+  {
+    text: "Thoughts should be guarded carefully because",
+    pick: 2,
+    options: [
+      { t: "Impure thoughts lead to impure acts.", c: true },
+      { t: "Your spouse can read your thoughts.", c: false },
+      { t: "Wrong thinking can severely harm your marriage.", c: true }
+    ],
+    feedback: "\"As he thinks in his heart, so is he\" (Proverbs 23:7). <b>Thoughts uncontrolled are like a car left in neutral on a steep hill</b> — the result can be disaster."
+  },
+  {
+    text: "I want my marriage to reflect God's unselfish, committed, and joyful love for me.",
+    pick: 1,
+    options: [
+      { t: "Yes", c: true },
+      { t: "No", c: false }
+    ],
+    feedback: "That's the heart of this whole study — <b>a marriage built to reflect God's own love</b> is the goal every key points toward."
+  }
+];
+
+let current = 0;
+let score = 0; // number of fully-correct questions
+let questionState = questions.map(() => ({ selected: [], submitted: false }));
+
+const quizCard = document.getElementById('quizCard');
+const resultsCard = document.getElementById('resultsCard');
+const progressText = document.getElementById('progressText');
+const keyring = document.getElementById('keyring');
+
+function buildKeyring(){
+  // remove old keys (keep label)
+  [...keyring.querySelectorAll('.key')].forEach(k => k.remove());
+  questions.forEach((q, i) => {
+    const el = document.createElement('div');
+    el.className = 'key locked';
+    el.id = 'key-' + i;
+    el.innerHTML = KEY_SVG;
+    keyring.appendChild(el);
+  });
+}
+
+function isFullyCorrect(qi){
+  const q = questions[qi];
+  const st = questionState[qi];
+  const correctIdxs = q.options.map((o,i)=>o.c?i:-1).filter(i=>i>=0);
+  if (st.selected.length !== correctIdxs.length) return false;
+  return correctIdxs.every(i => st.selected.includes(i));
+}
+
+function renderQuestion(){
+  const q = questions[current];
+  const st = questionState[current];
+  progressText.textContent = `Question ${current+1} of ${questions.length}`;
+
+  const plural = q.pick === 1 ? 'answer' : 'answers';
+  let html = `
+    <div class="qnum">Round ${current+1}</div>
+    <div class="qtext">${q.text}</div>
+    <div class="qhint">Select ${q.pick} ${plural}</div>
+    <div class="options" id="optionsWrap">
+  `;
+
+  q.options.forEach((opt, i) => {
+    const selected = st.selected.includes(i);
+    let cls = 'opt' + (selected ? ' selected' : '');
+    let tag = '';
+    if (st.submitted){
+      cls += ' disabled';
+      if (opt.c && selected){ cls += ' correct-hit'; tag = '<span class="tag g">Key ✓</span>'; }
+      else if (!opt.c && selected){ cls += ' wrong-hit'; tag = '<span class="tag r">Not it</span>'; }
+      else if (opt.c && !selected){ cls += ' missed-correct'; tag = '<span class="tag a">Missed</span>'; }
+    }
+    html += `
+      <div class="${cls}" data-i="${i}" onclick="toggleOption(${i})">
+        <div class="box">${selected ? '✓' : ''}</div>
+        <div class="opt-label">${opt.t}</div>
+        ${tag}
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+
+  if (st.submitted){
+    const won = isFullyCorrect(current);
+    html += `
+      <div class="feedback show">
+        <div class="verdict ${won ? 'win' : 'lose'}">${won ? '🔑 Key Unlocked!' : '✦ Not quite this key...'}</div>
+        ${q.feedback}
+      </div>
+    `;
+  }
+
+  html += `
+    <div class="actions">
+      ${st.submitted
+        ? `<button class="btn-gold" onclick="nextQuestion()">${current === questions.length-1 ? 'See Results' : 'Next Question'}</button>`
+        : `<button class="btn-gold" id="submitBtn" onclick="submitAnswer()" disabled>Submit</button>`
+      }
+    </div>
+  `;
+
+  quizCard.innerHTML = html;
+  updateSubmitState();
+}
+
+function toggleOption(i){
+  const st = questionState[current];
+  if (st.submitted) return;
+  const q = questions[current];
+  const idx = st.selected.indexOf(i);
+  if (idx >= 0){
+    st.selected.splice(idx,1);
+  } else {
+    if (st.selected.length >= q.pick) return; // cap at required count
+    st.selected.push(i);
+  }
+  renderQuestion();
+}
+
+function updateSubmitState(){
+  const btn = document.getElementById('submitBtn');
+  if (!btn) return;
+  const st = questionState[current];
+  const q = questions[current];
+  btn.disabled = st.selected.length !== q.pick;
+}
+
+function submitAnswer(){
+  const st = questionState[current];
+  st.submitted = true;
+  if (isFullyCorrect(current)){
+    score++;
+    document.getElementById('key-'+current)?.classList.remove('locked');
+    document.getElementById('key-'+current)?.classList.add('unlocked');
+  } else {
+    document.getElementById('key-'+current)?.classList.remove('locked');
+    document.getElementById('key-'+current)?.classList.add('missed');
+  }
+  renderQuestion();
+}
+
+function nextQuestion(){
+  if (current < questions.length - 1){
+    current++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults(){
+  quizCard.style.display = 'none';
+  resultsCard.style.display = 'block';
+  progressText.textContent = 'Complete';
+
+  let verdict, verse;
+  const pct = score / questions.length;
+  if (pct === 1){
+    verdict = "All 13 keys unlocked — a marriage of wisdom!";
+  } else if (pct >= 0.7){
+    verdict = "Most of the keys are in hand.";
+  } else if (pct >= 0.4){
+    verdict = "A few keys found — a few more to search for.";
+  } else {
+    verdict = "The keyring is still mostly empty.";
+  }
+
+  resultsCard.innerHTML = `
+    <h2>${verdict}</h2>
+    <div class="score-big">${score} / ${questions.length}</div>
+    <div class="score-label">Keys Unlocked</div>
+    <div class="verse">"Unless the <span>Lord builds the house</span>, they labor in vain who build it." — Psalm 127:1</div>
+    <div class="actions" style="justify-content:center;">
+      <button class="btn-ghost" onclick="restart()">Play Again</button>
+    </div>
+  `;
+}
+
+function restart(){
+  current = 0;
+  score = 0;
+  questionState = questions.map(() => ({ selected: [], submitted: false }));
+  buildKeyring();
+  quizCard.style.display = 'block';
+  resultsCard.style.display = 'none';
+  renderQuestion();
+}
+
+buildKeyring();
+renderQuestion();
+</script>
+</body>
+</html>
